@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zack Zati - Single Page Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts: Roboto (primary) & Xanh Mono (secondary) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Xanh+Mono:wght@400;700&display=swap">
+
+  <!-- PDF.js for Resume Viewer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+  <style>
+    /* ========== 1) RESET & BASE ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom, #1a1a1a, #0d0d0d 70%);
+      color: #e0e0e0;
+      overflow: hidden;
+      height: 100vh;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      font-family: 'Xanh Mono', monospace;
+      color: #fff;
+      text-shadow: 0 0 3px rgba(255,0,0,0.4);
+    }
+    a { color: #e0e0e0; text-decoration: none; transition: color 0.2s ease; }
+    a:hover { color: #ff4444; }
+
+    /* ========== 2) LOADER ========== */
+    #loadingScreen {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #000;
+      display: none; /* will be shown on first visit */
+      flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loader-circle {
+      width: 120px; height: 120px;
+      border-radius: 50%; overflow: hidden;
+      margin-bottom: 1em;
+      box-shadow: 0 0 20px rgba(255,0,0,0.7);
+    }
+    .loader-circle img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .loader-percent {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Xanh Mono', monospace;
+      font-size: 1.2em; font-weight: bold;
+      pointer-events: none; color: #fff;
+    }
+
+    /* ========== 3) MINI MATRIX TEXT ========== */
+
+
+    /* ========== 4) NAVBAR ========== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 70; height: 60px;
+      background: rgba(20,0,0,0.8);
+      backdrop-filter: blur(2px);
+      border-bottom: 1px solid rgba(255,0,0,0.3);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1em;
+    }
+    .logo-name {
+      display: flex; align-items: center;
+      font-size: 1.4em; font-weight: bold; color: #fff;
+    }
+    .logo-name .site-name { margin-right: 0.5em; }
+    /* Removed pipes canvas since pipes are removed */
+    .nav-links { display: flex; align-items: center; }
+    .nav-links ul {
+      display: flex; gap: 2em; list-style: none;
+    }
+    .nav-links li { position: relative; }
+    .nav-links a:hover { color: #ff4444; }
+    /* Portfolio submenu */
+    .submenu {
+      display: none;  /* Hidden by default */
+      position: absolute;
+      top: 100%;  /* Directly below "Portfolio" */
+      left: 0;
+      background: rgba(20, 0, 0, 0.95);
+      border: 1px solid rgba(255, 0, 0, 0.4);
+      padding: 0;
+      list-style: none;
+      min-width: 200px;  /* Ensures uniform width */
+      white-space: nowrap; /* Prevents text wrapping */
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    }
+    .nav-links li:hover > .submenu {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }    
+    .submenu li {
+      padding: 0.5em; border-bottom: 1px solid rgba(255,0,0,0.2);
+    }
+    .submenu li:last-child { border-bottom: none; }
+    .submenu a { display: block; }
+
+    /* Hamburger for mobile */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .hamburger div {
+      width: 25px; height: 3px;
+      background: #fff;
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-links.mobile-active {
+        display: flex;
+        position: absolute; top: 60px; left: 0; right: 0;
+        background: rgba(20,0,0,0.9);
+        flex-direction: column; gap: 1em;
+        padding: 1em 0;
+      }
+      .nav-links ul { flex-direction: column; gap: 1em; }
+      .submenu li { border: none; }
+    }
+
+    /* ========== 5) MAIN CONTENT & SECTIONS ========== */
+    #mainContent {
+      position: absolute; top: 60px; left: 0; right: 0; bottom: 0;
+      overflow: hidden; z-index: 50;
+    }
+    .section {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      padding: 2em; overflow-y: auto;
+      display: none; opacity: 0; filter: hue-rotate(10deg);
+      transition: opacity 0.3s, filter 0.3s;
+    }
+    .section.active {
+      display: block; opacity: 1; filter: hue-rotate(0deg);
+    }
+
+    /* ========== 6) HOME & ABOUT STYLES ========== */
+    #home { text-align: center; max-width: 800px; margin: auto; }
+    #home h1 { font-size: 3.5em; margin-bottom: 0.2em; letter-spacing: 2px; }
+    #home h2 { font-size: 2em; margin-bottom: 1em; color: #ffaaaa; }
+    #home p { font-size: 1.2em; margin-bottom: 1em; }
+    #home ul { list-style: disc; margin: 0 auto 1.5em auto; text-align: left; max-width: 400px; font-size: 1.1em; }
+    #about { text-align: center; max-width: 800px; margin: auto; }
+    .content-box {
+      background: rgba(30,0,0,0.8);
+      box-shadow: 0 0 15px rgba(255,0,0,0.2);
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 1.5em;
+      margin-top: 1em;
+    }
+
+    /* ========== 7) PORTFOLIO MAIN & SUBSECTIONS ========== */
+    #portfolioMain { text-align: center; }
+    .grid-3links {
+      display: flex; gap: 2em; margin-top: 2em;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .grid-3links .card {
+      background: rgba(30,0,0,0.8);
+      border: 1px solid rgba(255,0,0,0.2);
+      border-radius: 5px; padding: 2em;
+      text-align: center; transition: transform 0.3s, box-shadow 0.3s;
+      width: 200px; cursor: pointer;
+    }
+    .grid-3links .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255,0,0,0.5);
+    }
+
+    /* Startups */
+    #startups .business-logo { margin-top: 1em; text-align: center; }
+    #startups .business-logo img {
+      width: 90px; height: 90px;
+      object-fit: contain; border-radius: 5px;
+      box-shadow: 0 0 10px rgba(255,0,0,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #startups .business-logo img:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 15px rgba(255,0,0,0.7);
+    }
+
+    /* Code Portfolio */
+    #codePortfolio .repo-scroll-box {
+      max-height: 300px; overflow-y: auto;
+      border: 1px solid rgba(255,0,0,0.3);
+      background: rgba(30,0,0,0.8); border-radius: 5px;
+      box-shadow: inset 0 0 10px rgba(255,0,0,0.2);
+      padding: 1em; margin-top: 1em;
+    }
+    .repo-item {
+      margin-bottom: 1em; padding: 0.5em;
+      border-bottom: 1px solid rgba(255,0,0,0.2);
+    }
+    .repo-item:last-child { border-bottom: none; }
+    .repo-item h3 { font-size: 1em; margin-bottom: 0.2em; color: #ffcccc; }
+    .repo-item p { font-size: 0.9em; color: #cccccc; }
+
+    /* Design Portfolio */
+    #designPortfolio h3 { margin-top: 2em; margin-bottom: 0.5em; }
+    #designPortfolio .nonsense-scroller {
+      display: flex; gap: 1em; overflow-x: auto;
+      margin-bottom: 2em; padding: 1em;
+      background: rgba(30,0,0,0.6); border: 1px solid rgba(255,0,0,0.2);
+      border-radius: 5px; box-shadow: inset 0 0 10px rgba(255,0,0,0.2);
+    }
+    #designPortfolio .nonsense-scroller img {
+      max-height: 200px; border-radius: 4px;
+      box-shadow: 0 0 5px rgba(255,255,255,0.1);
+    }
+    #designPortfolio .separate-art {
+      margin-top: 2em; display: flex; gap: 1em; flex-wrap: wrap;
+    }
+    #designPortfolio .separate-art .art-piece {
+      background: rgba(30,0,0,0.4); border: 1px solid rgba(255,0,0,0.2);
+      border-radius: 4px; padding: 1em;
+      box-shadow: 0 0 5px rgba(255,0,0,0.2);
+    }
+    #designPortfolio .separate-art img { max-width: 200px; height: auto; box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+
+    /* ========== 8) CONNECT ========== */
+    #connect .social-links {
+      display: flex; justify-content: center; gap: 2em; margin-bottom: 1em;
+    }
+    #connect a.button {
+      background-color: #cc0000; padding: 0.8em 1.2em;
+      border-radius: 5px; color: #fff; transition: background 0.3s;
+    }
+    #connect a.button:hover { background-color: #ff3333; }
+  </style>
+</head>
+<body>
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen">
+    <div class="loader-circle">
+      <img src="loader.gif" alt="" />
+      <div class="loader-percent"></div>
+    </div>
+  </div>
+
+  <!-- MINI MATRIX TEXT -->
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo-name">
+    </div>
+    <div class="hamburger" id="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <ul>
+        <li><a href="javascript:void(0)" data-section="home">Home</a></li>
+        <li><a href="javascript:void(0)" data-section="about">About</a></li>
+        <li>
+          <a href="javascript:void(0)" data-section="portfolioMain">Portfolio</a>
+          <ul class="submenu">
+            <li><a href="javascript:void(0)" data-section="startups">Startups</a></li>
+            <li><a href="javascript:void(0)" data-section="codePortfolio">Code Portfolio</a></li>
+            <li><a href="javascript:void(0)" data-section="designPortfolio">Design Portfolio</a></li>
+          </ul>
+        </li>
+        <li><a href="javascript:void(0)" data-section="connect">Connect</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <div id="mainContent">
+    <!-- HOME SECTION -->
+    <section id="home" class="section active" style="text-align: center; max-width: 800px; margin: auto;">
+      <h1 class="home-title" style="font-size: 3.5em; margin-bottom: 0.2em; letter-spacing: 2px;">ZACK ZATI</h1>
+      <h2 class="home-subtitle" style="font-size: 2em; margin-bottom: 1em; color: #ffaaaa;">I, Zack Zati</h2>
+      <p style="font-size: 1.2em; margin-bottom: 1em;">
+        I am a jack of all trades offering a range of services.<br>
+        My expertise and interests include:
+      </p>
+      <ul style="list-style: disc; margin: 0 auto 1.5em auto; text-align: left; max-width: 400px; font-size: 1.1em;">
+        <li>Full Stack Web Development</li>
+        <li>Cybersecurity / Investigating</li>
+        <li>System Administration</li>
+        <li>Graphic Design</li>
+      </ul>
+      <p style="font-size: 1.2em; margin-bottom: 0.5em;">Let's Collaborate<br>
+         Contact me here to discuss a new project:</p>
+      <a href="mailto:zzimports@outlook.com" style="font-size: 1.2em;">zzimports@outlook.com</a>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section" style="text-align: center; max-width: 800px; margin: auto;">
+      <h2 style="font-size: 2.5em; margin-bottom: 0.5em;">About Me</h2>
+      <div class="content-box">
+        <p style="font-size: 1.1em; margin-bottom: 1em;">My full name is <strong>Zackary Xavier Zatizabal</strong>. I'm a developer, investigator, and digital creative with a passion for solving complex challenges through technology.</p>
+        <p style="font-size: 1.1em;">I blend technical expertise with creative flair, tackling everything from full stack development to system security and beyond. My work reflects a balance of precision, innovation, and artistic vision.</p>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO MAIN -->
+    <section id="portfolioMain" class="section" style="text-align: center;">
+      <h2 style="font-size: 2.5em;">Portfolio</h2>
+      <p style="font-size: 1.1em;">Explore my professional ventures, coding projects, and design creations below.</p>
+      <div class="grid-3links">
+        <div class="card" data-section="startups">Startups</div>
+        <div class="card" data-section="codePortfolio">Code Portfolio</div>
+        <div class="card" data-section="designPortfolio">Design Portfolio</div>
+      </div>
+    </section>
+
+    <!-- STARTUPS SECTION -->
+    <section id="startups" class="section">
+      <h2 style="font-size: 2.5em;">Startups</h2>
+      <div class="content-box">
+        <p style="font-size: 1.1em;">I operate <strong>Synapse Solutions Ltd.</strong>, focusing on innovative tech solutions for businesses.</p>
+        <p style="font-size: 1.1em; margin-top: 1em;">Check out our site for more details on services, products, and how we can collaborate.</p>
+
+        <div class="business-logo" style="text-align: center; margin-top: 1em;">
+          <a href="https://www.synapsesolutions.ltd" target="_blank" rel="noopener">
+            <img src="sylogo.png" alt="Synapse Solutions" style="width: 90px; height: 90px; object-fit: contain; border-radius: 5px; box-shadow: 0 0 10px rgba(255,0,0,0.4);" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE PORTFOLIO SECTION -->
+    <section id="codePortfolio" class="section">
+      <h2 style="font-size: 2.5em;">Code Portfolio</h2>
+      <p style="font-size: 1.1em;">Below are some of my more code-heavy repositories. <a href="https://github.com/Zzatiz" target="_blank" rel="noopener" style="color:#ff4444;">Visit my GitHub</a> for more!</p>
+      <div class="repo-scroll-box">
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/scrapbook-font" target="_blank" rel="noopener">scrapbook-font</a> Public</h3>
+          <p>Cool scrapbook font for fun (Python). Updated 6 hours ago</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/CustomFriend" target="_blank" rel="noopener">CustomFriend</a> Public</h3>
+          <p>AI telegram chatbot with intelligent responses & voice messages (Python). Updated 6 hours ago</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/frontDoorScraper" target="_blank" rel="noopener">frontDoorScraper</a> Public</h3>
+          <p>Scrapes front door data from addresses in a CSV (Python). Updated 6 hours ago</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/Zzatiz.github.io" target="_blank" rel="noopener">Zzatiz.github.io</a> Public</h3>
+          <p>Personal GitHub Pages site (HTML). Updated 2 weeks ago</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/Gepetto-Browser" target="_blank" rel="noopener">Gepetto-Browser</a> Public</h3>
+          <p>Captcha + CF solving, puppeteer fork with human-like browsing (HTML, MIT). Updated 2 weeks ago</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/stockboard" target="_blank" rel="noopener">stockboard</a> Public</h3>
+          <p>(Python). Updated on Jan 17</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/zzcrypter" target="_blank" rel="noopener">zzcrypter</a> Public</h3>
+          <p>(C#). Updated on Jan 31, 2024</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/SnP-predictor" target="_blank" rel="noopener">SnP-predictor</a> Public</h3>
+          <p>Predicts daily S&P 500 change % from top shareholders. (Python). Updated on Aug 13, 2023</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/neocrypter" target="_blank" rel="noopener">neocrypter</a> Public</h3>
+          <p>A cryptography cheat-sheet program. Updated on May 2, 2023</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN PORTFOLIO SECTION -->
+    <section id="designPortfolio" class="section">
+      <h2 style="font-size: 2.5em;">Design Portfolio</h2>
+      <h3 style="font-size: 1.8em;">Nonsense Art</h3>
+      <div class="nonsense-scroller">
+        <img src="p.gif" alt="Nonsense Art 1" />
+        <img src="gif1.gif" alt="Nonsense Art 2" />
+        <img src="gif2.gif" alt="Nonsense Art 3" />
+        <img src="cricket.gif" alt="Nonsense Art 4" />
+      </div>
+      <h3 style="font-size: 1.8em;">Other Art</h3>
+      <div class="separate-art">
+        <div class="art-piece">
+          <img src="scribbles.JPG" alt="Notebook Nonsense" />
+          <figcaption style="font-size:0.9em; color:#fff;">Notebook Nonsense</figcaption>
+        </div>
+        <div class="art-piece">
+          <img src="Lushed.png" alt="Urban Mural" />
+          <figcaption style="font-size:0.9em; color:#fff;">Urban Mural</figcaption>
+        </div>
+        <div class="art-piece">
+          <iframe width="300" height="200"
+            src="https://www.youtube.com/embed/68hUynrpLvE?si=WZFagqoB2w2YkStt"
+            title="Art Collage Video" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+          <figcaption style="font-size:0.9em; color:#fff;">Art Collage Video</figcaption>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONNECT SECTION -->
+    <section id="connect" class="section">
+      <h2 style="font-size: 2.5em;">Connect</h2>
+      <div class="content-box">
+        <p style="font-size:1.1em;">Interested in collaborating, have questions, or just want to chat? Feel free to reach out:</p>
+        <p style="font-size:1.1em;">Email: <strong>zzimports@outlook.com</strong></p>
+      </div>
+      <div class="social-links" style="margin-top:1.5em; display:flex; justify-content:center; gap:2em;">
+        <a class="button" href="https://www.linkedin.com/public-profile/settings" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="button" href="https://www.youtube.com/channel/UCj7Wvl98o-812LTdeS3Hbwg" target="_blank" rel="noopener">YouTube</a>
+      </div>
+      <!-- PDF viewer auto-load -->
+      <div id="pdfViewer" style=" display:flex; justify-content:center; width:100%; height:auto; overflow:auto; border:1px solid #444; margin-top:1em;"></div>
+    </section>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    /* 1) LOADER with localStorage-based skip */
+    document.addEventListener('DOMContentLoaded', function() {
+      const visitedBefore = localStorage.getItem('visitedBefore');
+      const loader = document.getElementById('loadingScreen');
+      if (!visitedBefore) {
+        loader.style.display = 'flex';
+        localStorage.setItem('visitedBefore','true');
+        runLoaderAnimation();
+      } else {
+        loader.style.display = 'none';
+      }
+      // Auto-load the resume PDF on DOM load
+      loadPdf();
+    });
+    function runLoaderAnimation() {
+      const loader = document.getElementById('loadingScreen');
+      const percentEl = loader.querySelector('.loader-percent');
+      let progress = 0;
+      const totalDuration = 2000;
+      const intervalTime = 30;
+      const fastDuration = totalDuration * 0.5;
+      const slowDuration = totalDuration * 0.5;
+      const fastIncrement = 80 / (fastDuration / intervalTime);
+      const slowIncrement = 20 / (slowDuration / intervalTime);
+      const interval = setInterval(() => {
+        if (progress < 80) {
+          progress += fastIncrement;
+        } else if (progress < 100) {
+          progress += slowIncrement;
+        }
+        if (progress > 100) progress = 100;
+        percentEl.textContent = Math.floor(progress) + '%';
+        if (progress === 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 500);
+          }, 300);
+        }
+      }, intervalTime);
+    }
+
+    /* 2) MOBILE NAV TOGGLE (Hamburger) */
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('mobile-active');
+    });
+
+    /* 3) SECTION SWITCHING */
+    let currentSection = 'home';
+    const allNavLinks = document.querySelectorAll('nav a[data-section]');
+    allNavLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetSec = this.getAttribute('data-section');
+        if (!targetSec || targetSec === currentSection) return;
+        switchSection(targetSec);
+        if(window.innerWidth < 768){
+          navLinks.classList.remove('mobile-active');
+        }
+      });
+    });
+    // Also handle portfolio main cards
+    const portfolioCards = document.querySelectorAll('#portfolioMain .card');
+    portfolioCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const target = card.dataset.section;
+        if (target) switchSection(target);
+      });
+    });
+    function switchSection(sectionId) {
+      const oldSec = document.getElementById(currentSection);
+      if (!oldSec) return;
+      oldSec.style.filter = 'hue-rotate(10deg)';
+      oldSec.style.opacity = '0';
+      setTimeout(() => {
+        oldSec.classList.remove('active');
+        const newSec = document.getElementById(sectionId);
+        if (!newSec) return;
+        newSec.style.display = 'block';
+        newSec.style.opacity = '0';
+        newSec.style.filter = 'hue-rotate(10deg)';
+        setTimeout(() => {
+          newSec.classList.add('active');
+          newSec.style.opacity = '1';
+          newSec.style.filter = 'hue-rotate(0deg)';
+          currentSection = sectionId;
+        }, 50);
+      }, 300);
+    }
+
+    /* 5) PDF.js Resume Viewer Auto-Load */
+    function loadPdf() {
+      const pdfUrl = encodeURI("Zackary Xavier Zatizabal Resume.pdf");
+      const container = document.getElementById("pdfViewer");
+      container.innerHTML = "";
+      pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+        for (let i = 1; i <= pdf.numPages; i++) {
+          pdf.getPage(i).then(page => {
+            let viewport = page.getViewport({ scale: 1.5 });
+            let canvas = document.createElement("canvas");
+            let context = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            container.appendChild(canvas);
+            let renderContext = { canvasContext: context, viewport: viewport };
+            page.render(renderContext);
+          });
+        }
+      }).catch(error => {
+        console.error("Error loading PDF:", error);
+        window.open(pdfUrl, "_blank");
+      });
+    }
+  </script>
+</body>
+</html>
