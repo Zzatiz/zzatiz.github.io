@@ -257,10 +257,23 @@
     .repo-item {
       margin-bottom: 1em; padding: 0.5em;
       border-bottom: 1px solid rgba(255,0,0,0.2);
+      pointer-events: auto;
     }
     .repo-item:last-child { border-bottom: none; }
-    .repo-item h3 { font-size: 1em; margin-bottom: 0.2em; color: #ffcccc; }
-    .repo-item p { font-size: 0.9em; color: #cccccc; }
+    .repo-item h3 { 
+      font-size: 1em; 
+      margin-bottom: 0.2em; 
+      color: #ffcccc;
+      pointer-events: none; /* Prevent h3 from blocking scroll */
+    }
+    .repo-item h3 a {
+      pointer-events: auto; /* But allow link clicks */
+    }
+    .repo-item p { 
+      font-size: 0.9em; 
+      color: #cccccc;
+      pointer-events: none; /* Prevent p from blocking scroll */
+    }
 
     /* Design Portfolio */
     #designPortfolio h3 { margin-top: 2em; margin-bottom: 0.5em; }
@@ -376,7 +389,7 @@
         <p style="font-size: 1.1em; margin-top: 1em;">Check out our site for more details on services, products, and how we can collaborate.</p>
 
         <div class="business-logo" style="text-align: center; margin-top: 1em;">
-          <a href="https://synapsesolutions.ltd" target="_blank" rel="noopener">
+          <a href="https://synapsesolutions.ltd" target="_blank" rel="noopener" onclick="event.stopPropagation(); window.open('https://synapsesolutions.ltd', '_blank'); return false;">
             <img src="sylogo.png" alt="Synapse Solutions" style="width: 90px; height: 90px; object-fit: contain; border-radius: 5px; box-shadow: 0 0 10px rgba(255,0,0,0.4);" />
           </a>
         </div>
@@ -389,40 +402,60 @@
       <p style="font-size: 1.1em;">Below are some of my more code-heavy repositories. <a href="https://github.com/Zzatiz" target="_blank" rel="noopener" style="color:#ff4444;">Visit my GitHub</a> for more!</p>
       <div class="repo-scroll-box">
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/scrapbook-font" target="_blank" rel="noopener">scrapbook-font</a> Public</h3>
-          <p>Cool scrapbook font for fun (Python). Updated 6 hours ago</p>
+          <h3><a href="https://github.com/Zzatiz/zzatiz.github.io" target="_blank" rel="noopener">zzatiz.github.io</a></h3>
+          <p>Personal GitHub Pages site (HTML)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/CustomFriend" target="_blank" rel="noopener">CustomFriend</a> Public</h3>
-          <p>AI telegram chatbot with intelligent responses & voice messages (Python). Updated 6 hours ago</p>
+          <h3><a href="https://github.com/Zzatiz/linuxRemote" target="_blank" rel="noopener">linuxRemote</a></h3>
+          <p>Remote controlling of your linux computer incase it gets in the hands of someone else (Python)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/frontDoorScraper" target="_blank" rel="noopener">frontDoorScraper</a> Public</h3>
-          <p>Scrapes front door data from addresses in a CSV (Python). Updated 6 hours ago</p>
+          <h3><a href="https://github.com/Zzatiz/scrapbook-font" target="_blank" rel="noopener">scrapbook-font</a></h3>
+          <p>Cool scrapbook font for fun (Python)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/Zzatiz.github.io" target="_blank" rel="noopener">Zzatiz.github.io</a> Public</h3>
-          <p>Personal GitHub Pages site (HTML). Updated 2 weeks ago</p>
+          <h3><a href="https://github.com/Zzatiz/CustomFriend" target="_blank" rel="noopener">CustomFriend</a></h3>
+          <p>AI telegram chatbot that can respond intelligently with AI and voice messages (Python)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/Gepetto-Browser" target="_blank" rel="noopener">Gepetto-Browser</a> Public</h3>
-          <p>Captcha + CF solving, puppeteer fork with human-like browsing (HTML, MIT). Updated 2 weeks ago</p>
+          <h3><a href="https://github.com/Zzatiz/frontDoorScraper" target="_blank" rel="noopener">frontDoorScraper</a></h3>
+          <p>Scrapes the front door of each address from a CSV (Python)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/stockboard" target="_blank" rel="noopener">stockboard</a> Public</h3>
-          <p>(Python). Updated on Jan 17</p>
+          <h3><a href="https://github.com/Zzatiz/Gepetto-Browser" target="_blank" rel="noopener">Gepetto-Browser</a></h3>
+          <p>Captcha + CF solving, human replicating puppeteer fork (HTML, MIT License)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/zzcrypter" target="_blank" rel="noopener">zzcrypter</a> Public</h3>
-          <p>(C#). Updated on Jan 31, 2024</p>
+          <h3><a href="https://github.com/Zzatiz/stockboard" target="_blank" rel="noopener">stockboard</a></h3>
+          <p>Stock tracking board (Python)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/SnP-predictor" target="_blank" rel="noopener">SnP-predictor</a> Public</h3>
-          <p>Predicts daily S&P 500 change % from top shareholders. (Python). Updated on Aug 13, 2023</p>
+          <h3><a href="https://github.com/Zzatiz/schoolstuff" target="_blank" rel="noopener">schoolstuff</a></h3>
+          <p>School projects and assignments from misc years (Java)</p>
         </div>
         <div class="repo-item">
-          <h3><a href="https://github.com/Zzatiz/neocrypter" target="_blank" rel="noopener">neocrypter</a> Public</h3>
-          <p>A cryptography cheat-sheet program. Updated on May 2, 2023</p>
+          <h3><a href="https://github.com/Zzatiz/InstagramReporter" target="_blank" rel="noopener">InstagramReporter</a></h3>
+          <p>Puppeteer reports instagram account of choosing via Telegram (Python)</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/zzcrypter" target="_blank" rel="noopener">zzcrypter</a></h3>
+          <p>Encryption tool (C#)</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/SnP-predictor" target="_blank" rel="noopener">SnP-predictor</a></h3>
+          <p>Predicts daily S&P 500 change % from top shareholders (Python)</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/neocrypter" target="_blank" rel="noopener">neocrypter</a></h3>
+          <p>Cheat sheet cryptography program with custom runPE</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/DDAEnforcer" target="_blank" rel="noopener">DDAEnforcer</a></h3>
+          <p>Track 2 to NFC</p>
+        </div>
+        <div class="repo-item">
+          <h3><a href="https://github.com/Zzatiz/usaroll" target="_blank" rel="noopener">usaroll</a></h3>
+          <p>Pure HTML Java webpage that displays a rolling map of the US</p>
         </div>
       </div>
     </section>
