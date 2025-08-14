@@ -12,6 +12,10 @@
 
   <!-- PDF.js for Resume Viewer -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    // Set worker source to fix deprecated API warning
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  </script>
 
   <style>
     /* ========== 1) RESET & BASE ========== */
@@ -102,8 +106,8 @@
       visibility: hidden;
       transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     }
-    /* Only show submenu when hovering over items that HAVE a submenu (not portfolioMain) */
-    .nav-links li:not([data-no-submenu]):hover > .submenu {
+    /* Show submenu on hover */
+    .nav-links li:hover > .submenu {
       display: block;
       opacity: 1;
       visibility: visible;
@@ -171,21 +175,43 @@
     }
 
     /* ========== 7) PORTFOLIO MAIN & SUBSECTIONS ========== */
-    #portfolioMain { text-align: center; }
+    #portfolioMain { 
+      text-align: center; 
+      position: relative;
+      z-index: 1;
+    }
     .grid-3links {
-      display: flex; gap: 2em; margin-top: 2em;
-      justify-content: center; flex-wrap: wrap;
+      display: flex; 
+      gap: 2em; 
+      margin-top: 2em;
+      justify-content: center; 
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 10;
     }
     .grid-3links .card {
-      background: rgba(30,0,0,0.8);
-      border: 1px solid rgba(255,0,0,0.2);
-      border-radius: 5px; padding: 2em;
-      text-align: center; transition: transform 0.3s, box-shadow 0.3s;
-      width: 200px; cursor: pointer;
+      background: rgba(30,0,0,0.9);
+      border: 2px solid rgba(255,0,0,0.4);
+      border-radius: 8px; 
+      padding: 2em;
+      text-align: center; 
+      transition: all 0.3s ease;
+      width: 200px; 
+      cursor: pointer;
+      position: relative;
+      z-index: 20;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1em;
     }
     .grid-3links .card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(255,0,0,0.5);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 20px rgba(255,0,0,0.6);
+      background: rgba(40,0,0,0.95);
+      border-color: rgba(255,0,0,0.8);
+    }
+    .grid-3links .card:active {
+      transform: translateY(-2px) scale(1.02);
     }
 
     /* Startups */
@@ -274,11 +300,8 @@
       <ul>
         <li><a href="javascript:void(0)" data-section="home">Home</a></li>
         <li><a href="javascript:void(0)" data-section="about">About</a></li>
-        <li data-no-submenu>
-          <a href="javascript:void(0)" data-section="portfolioMain">Portfolio</a>
-        </li>
         <li>
-          <a href="javascript:void(0)">Portfolio ▼</a>
+          <a href="javascript:void(0)" data-section="portfolioMain">Portfolio</a>
           <ul class="submenu">
             <li><a href="javascript:void(0)" data-section="startups">Startups</a></li>
             <li><a href="javascript:void(0)" data-section="codePortfolio">Code Portfolio</a></li>
