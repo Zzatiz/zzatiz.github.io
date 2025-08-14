@@ -229,11 +229,30 @@
 
     /* Code Portfolio */
     #codePortfolio .repo-scroll-box {
-      max-height: 300px; overflow-y: auto;
+      max-height: 400px; 
+      overflow-y: auto;
+      overflow-x: hidden;
       border: 1px solid rgba(255,0,0,0.3);
-      background: rgba(30,0,0,0.8); border-radius: 5px;
+      background: rgba(30,0,0,0.8); 
+      border-radius: 5px;
       box-shadow: inset 0 0 10px rgba(255,0,0,0.2);
-      padding: 1em; margin-top: 1em;
+      padding: 1em; 
+      margin-top: 1em;
+    }
+    /* Custom scrollbar for repo box */
+    #codePortfolio .repo-scroll-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    #codePortfolio .repo-scroll-box::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.3);
+      border-radius: 4px;
+    }
+    #codePortfolio .repo-scroll-box::-webkit-scrollbar-thumb {
+      background: rgba(255,0,0,0.5);
+      border-radius: 4px;
+    }
+    #codePortfolio .repo-scroll-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,0,0,0.7);
     }
     .repo-item {
       margin-bottom: 1em; padding: 0.5em;
@@ -357,7 +376,7 @@
         <p style="font-size: 1.1em; margin-top: 1em;">Check out our site for more details on services, products, and how we can collaborate.</p>
 
         <div class="business-logo" style="text-align: center; margin-top: 1em;">
-          <a href="https://www.synapsesolutions.ltd" target="_blank" rel="noopener">
+          <a href="https://synapsesolutions.ltd" target="_blank" rel="noopener">
             <img src="sylogo.png" alt="Synapse Solutions" style="width: 90px; height: 90px; object-fit: contain; border-radius: 5px; box-shadow: 0 0 10px rgba(255,0,0,0.4);" />
           </a>
         </div>
@@ -447,10 +466,13 @@
         <p style="font-size:1.1em;">Email: <strong>zzimports@outlook.com</strong></p>
       </div>
       <div class="social-links" style="margin-top:1.5em; display:flex; justify-content:center; gap:2em;">
-        <a class="button" href="https://www.linkedin.com/public-profile/settings" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="button" href="https://www.linkedin.com/in/zackary-zatizabal-5518b5256/" target="_blank" rel="noopener">LinkedIn</a>
         <a class="button" href="https://www.youtube.com/channel/UCj7Wvl98o-812LTdeS3Hbwg" target="_blank" rel="noopener">YouTube</a>
       </div>
-      <!-- PDF viewer auto-load -->
+      <!-- PDF link and viewer -->
+      <div style="text-align: center; margin-top: 2em;">
+        <a href="Zackary Xavier Zatizabal Resume.pdf" target="_blank" style="color: #ff4444; font-size: 1.1em;">Open PDF in new tab for clickable links</a>
+      </div>
       <div id="pdfViewer" style="display:flex; justify-content:center; width:100%; height:auto; overflow:auto; border:1px solid #444; margin-top:1em; position:relative; z-index:1;"></div>
     </section>
   </div>
@@ -566,13 +588,6 @@
       const pdfUrl = encodeURI("Zackary Xavier Zatizabal Resume.pdf");
       const container = document.getElementById("pdfViewer");
       container.innerHTML = "";
-      
-      // Add a direct link to download/view PDF as fallback
-      const pdfLink = document.createElement("div");
-      pdfLink.style.textAlign = "center";
-      pdfLink.style.marginBottom = "1em";
-      pdfLink.innerHTML = `<a href="${pdfUrl}" target="_blank" style="color: #ff4444;">Open PDF in new tab for clickable links</a>`;
-      container.appendChild(pdfLink);
       
       pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
         for (let i = 1; i <= pdf.numPages; i++) {
