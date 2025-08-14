@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zack Zati | Connect</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Xanh+Mono&display=swap">
+  <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
+  <style>
+    /* Global basics */
+    * {
+      margin: 0; 
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      background-color: black;
+      color: white;
+      font-family: 'Xanh Mono', monospace;
+      overflow-x: hidden;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    a:hover {
+      color: red;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1em;
+      background-color: black;
+      border-bottom: 1px solid red;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    .navbar a {
+      margin: 0 20px;
+      font-size: 1.2em;
+      color: yellow;
+      transition: color 0.5s ease;
+    }
+
+    /* Matrix background text */
+    #matrix {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: pre-wrap;
+      color: red;
+      font-size: 1.2em;
+      line-height: 1.2em;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Title glitch effect */
+    #title {
+      text-align: center;
+      font-size: 4em;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+      z-index: 1;
+    }
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch:hover::before,
+    .glitch:hover::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      color: red;
+      clip-path: inset(50% 0 50% 0);
+      animation: glitch-animation 1s infinite alternate;
+      z-index: -1;
+    }
+    @keyframes glitch-animation {
+      0% {
+        clip-path: inset(2% 0 4% 0);
+      }
+      5% {
+        clip-path: inset(10% 0 1% 0);
+      }
+      10% {
+        clip-path: inset(4% 0 8% 0);
+      }
+      15%, 100% {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* Container for links & resume */
+    .container {
+      position: relative;
+      z-index: 1;
+      padding: 2em;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .social-links {
+      margin: 2em 0;
+    }
+    .social-links a {
+      display: inline-block;
+      margin: 0 10px;
+      color: #00ff00;
+      font-size: 1.2em;
+    }
+
+    /* Resume button */
+    #openPdfBtn {
+      background-color: #ff4d4d; /* Red background */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+      transition: background-color 0.3s;
+    }
+    #openPdfBtn:hover {
+      background-color: #cc0000; 
+    }
+
+    /* Scanning lines overlay (optional) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0) 50%);
+      background-size: 100% 2px;
+      z-index: 998;
+      pointer-events: none;
+    }
+
+    /* ASCII art container */
+    .ascii-art-container {
+      font-family: 'Courier New', monospace;
+      white-space: pre;
+      text-align: center;
+      background-color: #111;
+      color: #0f0;
+      padding: 1em;
+      margin-top: 2em;
+      overflow-x: auto;
+    }
+
+  </style>
+</head>
+<body onload="startMatrixAnimation()">
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="index.html" class="glitch" data-text="home">home</a>
+    <a href="https://github.com/Zzatiz" class="glitch" data-text="programs">programs</a>
+    <a href="Gallery.html" class="glitch" data-text="gallery">gallery</a>
+    <a href="Links.html" class="glitch" data-text="connect">connect</a>
+  </div>
+
+  <!-- Title & Matrix -->
+  <div id="title" class="glitch" data-text="Connect">Connect</div>
+  <pre id="matrix"></pre>
+
+  <div class="container">
+    <h2>Let's Connect</h2>
+    <p>Find me on my social channels or open my resume below:</p>
+
+    <!-- Social Links -->
+    <div class="social-links">
+      <a href="https://www.linkedin.com/public-profile/settings" target="_blank">LinkedIn</a>
+      <a href="https://www.youtube.com/channel/UCj7Wvl98o-812LTdeS3Hbwg" target="_blank">YouTube</a>
+      <!-- Add more as needed -->
+    </div>
+
+    <!-- Resume Button -->
+    <button id="openPdfBtn">Open Resume</button>
+
+    <!-- Adobe Embed for Resume -->
+    <script type="text/javascript">
+      document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
+          var adobeDCView = new AdobeDC.View({clientId: "fe7aa0a92eb147a1b7ca4c121a4f8818"});
+          var viewerConfig = { embedMode: "LIGHT_BOX" };
+          document.getElementById("openPdfBtn").addEventListener("click", function() {
+            adobeDCView.previewFile({
+              content: { 
+                location: {
+                  url: "https://zzatiz.github.io/Zackary%20Xavier%20Zatizabal%20Resume.pdf"
+                }
+              },
+              metaData: {
+                fileName: "Zackary Xavier Zatizabal Resume.pdf"
+              }
+            }, viewerConfig);
+          });
+      });
+    </script>
+
+    <!-- Example ASCII art area (if you want to show ASCII creations) -->
+    <div class="ascii-art-container">
+      <!-- Put any ASCII art you want here -->
+      <pre>
+        101010 101010
+        010101 010101
+        ASCII ART GOES HERE
+        101010 101010
+        010101 010101
+      </pre>
+    </div>
+  </div>
+
+  <script>
+    /* ========== MATRIX TEXT ANIMATION ========== */
+    let binaryArt = `
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+`;
+    const matrixEl = document.getElementById('matrix');
+
+    function printLineByLine(text, onComplete) {
+      let lines = text.split("\n");
+      let i = 0;
+      let interval = setInterval(() => {
+        if (i < lines.length) {
+          matrixEl.innerHTML += lines[i] + "\n";
+          i++;
+        } else {
+          clearInterval(interval);
+          onComplete && onComplete();
+        }
+      }, 100);
+    }
+    function deleteLineByLine(text, onComplete) {
+      let lines = text.split("\n");
+      let i = lines.length - 1;
+      let interval = setInterval(() => {
+        if (i >= 0) {
+          let currentText = matrixEl.innerHTML.trim().split("\n");
+          currentText.pop();
+          matrixEl.innerHTML = currentText.join("\n") + "\n";
+          i--;
+        } else {
+          clearInterval(interval);
+          onComplete && onComplete();
+        }
+      }, 100);
+    }
+    function animationCycle() {
+      printLineByLine(binaryArt, () => {
+        setTimeout(() => {
+          deleteLineByLine(binaryArt, () => {
+            setTimeout(animationCycle, 500);
+          });
+        }, 500);
+      });
+    }
+    function startMatrixAnimation() {
+      animationCycle();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zack Zati | Gallery</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Xanh+Mono&display=swap">
+  <style>
+    /* Global resets/basics */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: 'Xanh Mono', monospace;
+      overflow-x: hidden;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    a:hover {
+      color: red;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1em;
+      background-color: black;
+      border-bottom: 1px solid red;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    .navbar a {
+      margin: 0 20px;
+      font-size: 1.2em;
+      color: yellow;
+      transition: color 0.5s ease;
+    }
+
+    /* Matrix effect */
+    #matrix {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 1.2em;
+      line-height: 1.2em;
+      color: red;
+      white-space: pre-wrap;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Title glitch effect (optional for consistency) */
+    #title {
+      text-align: center;
+      font-size: 4em;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+      z-index: 1;
+    }
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch:hover::before,
+    .glitch:hover::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      color: red;
+      clip-path: inset(50% 0 50% 0);
+      animation: glitch-animation 1s infinite alternate;
+      z-index: -1;
+    }
+    @keyframes glitch-animation {
+      0% {
+        clip-path: inset(2% 0 4% 0);
+      }
+      5% {
+        clip-path: inset(10% 0 1% 0);
+      }
+      10% {
+        clip-path: inset(4% 0 8% 0);
+      }
+      15%, 100% {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* Main content wrapper */
+    .container {
+      position: relative;
+      z-index: 1;
+      padding: 2em;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* YouTube embed styling */
+    .video-wrapper {
+      text-align: center;
+      margin-bottom: 2em;
+    }
+    iframe {
+      width: 80%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
+    }
+
+    /* Sticker images / GIFs */
+    .gallery {
+      position: relative;
+      margin: 2em 0;
+    }
+    .sticker-art {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    /* Adjust positions as needed */
+    .sticker-p-gif {
+      background-image: url('p.gif');
+      width: 300px;
+      height: 300px;
+      top: 150px;
+      left: 10%;
+    }
+    .sticker-tall {
+      background-image: url('scribbles.jpg');
+      width: 400px;
+      height: 300px;
+      top: 400px;
+      left: 60%;
+      clip-path: inset(20% 0 0 0);
+    }
+    .sticker-square {
+      background-image: url('cricket.gif');
+      width: 333px;
+      height: 500px;
+      top: 450px;
+      left: 20%;
+    }
+    .sticker-wide {
+      background-image: url('Lushed.png');
+      width: 500px;
+      height: 500px;
+      top: 150px;
+      right: 10%;
+    }
+    .sticker-cross {
+      background-image: url('cross.gif');
+      width: 500px;
+      height: 500px;
+      top: 600px;
+      left: 40%;
+    }
+
+    /* Slideshow (optional if you want to reuse) */
+    .slideshow {
+      width: 500px;
+      max-width: 90%;
+      margin: 0 auto;
+      position: relative;
+    }
+    .mySlides {
+      display: none;
+    }
+    .mySlides img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Scanning lines overlay (optional) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0) 50%);
+      background-size: 100% 2px;
+      z-index: 998;
+      pointer-events: none;
+    }
+
+    /* Footer or social links if needed */
+    .footer {
+      text-align: center;
+      margin-top: 2em;
+      padding: 1em 0;
+      border-top: 1px solid red;
+    }
+
+    @media(max-width: 768px) {
+      #title {
+        font-size: 3em;
+      }
+      .navbar a {
+        margin: 0 10px;
+        font-size: 1em;
+      }
+      .sticker-art {
+        position: static; /* so they stack instead of absolute positioning */
+        margin: 1em auto;
+      }
+    }
+  </style>
+</head>
+<body onload="startMatrixAnimation()">
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="index.html" class="glitch" data-text="home">home</a>
+    <a href="https://github.com/Zzatiz" class="glitch" data-text="programs">programs</a>
+    <a href="Gallery.html" class="glitch" data-text="gallery">gallery</a>
+    <a href="Links.html" class="glitch" data-text="connect">connect</a>
+  </div>
+
+  <!-- Title & Matrix -->
+  <div id="title" class="glitch" data-text="Gallery">Gallery</div>
+  <pre id="matrix"></pre>
+
+  <!-- Container -->
+  <div class="container">
+    <!-- Embedded YouTube Video -->
+    <div class="video-wrapper">
+      <iframe 
+        src="https://www.youtube.com/embed/68hUynrpLvE?si=T9iYwfCKpAzSckk7"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- Sticker / GIF Gallery -->
+    <div class="gallery">
+      <div class="sticker-art sticker-p-gif"></div>
+      <div class="sticker-art sticker-tall"></div>
+      <div class="sticker-art sticker-square"></div>
+      <div class="sticker-art sticker-wide"></div>
+      <div class="sticker-art sticker-cross"></div>
+    </div>
+
+    <!-- Optional Slideshow -->
+    <div class="slideshow" style="margin-top: 800px;">
+      <div class="mySlides">
+        <img src="gif1.gif" alt="Slideshow 1">
+      </div>
+      <div class="mySlides">
+        <img src="gif2.gif" alt="Slideshow 2">
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (optional) -->
+  <div class="footer">
+    <p>© 2025 by Zack Zati. All rights reserved.</p>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    /* ========== MATRIX TEXT ANIMATION ========== */
+    let binaryArt = `
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+1010101010101010
+0101010101010101
+`;
+    const matrixEl = document.getElementById('matrix');
+
+    function printLineByLine(text, onComplete) {
+      let lines = text.split("\n");
+      let i = 0;
+      let interval = setInterval(() => {
+        if (i < lines.length) {
+          matrixEl.innerHTML += lines[i] + "\n";
+          i++;
+        } else {
+          clearInterval(interval);
+          onComplete && onComplete();
+        }
+      }, 100);
+    }
+    function deleteLineByLine(text, onComplete) {
+      let lines = text.split("\n");
+      let i = lines.length - 1;
+      let interval = setInterval(() => {
+        if (i >= 0) {
+          let currentText = matrixEl.innerHTML.trim().split("\n");
+          currentText.pop();
+          matrixEl.innerHTML = currentText.join("\n") + "\n";
+          i--;
+        } else {
+          clearInterval(interval);
+          onComplete && onComplete();
+        }
+      }, 100);
+    }
+    function animationCycle() {
+      printLineByLine(binaryArt, () => {
+        setTimeout(() => {
+          deleteLineByLine(binaryArt, () => {
+            setTimeout(animationCycle, 500);
+          });
+        }, 500);
+      });
+    }
+    function startMatrixAnimation() {
+      animationCycle();
+    }
+
+    /* ========== SLIDESHOW ========== */
+    let slideIndex = 0;
+    function showSlides() {
+      let slides = document.getElementsByClassName("mySlides");
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+      if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].style.display = "block";
+      }
+      setTimeout(showSlides, 4000);
+    }
+    showSlides();
+  </script>
+</body>
+</html>
