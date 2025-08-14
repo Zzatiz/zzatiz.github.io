@@ -302,11 +302,6 @@
         <li><a href="javascript:void(0)" data-section="about">About</a></li>
         <li>
           <a href="javascript:void(0)" data-section="portfolioMain">Portfolio</a>
-          <ul class="submenu">
-            <li><a href="javascript:void(0)" data-section="startups">Startups</a></li>
-            <li><a href="javascript:void(0)" data-section="codePortfolio">Code Portfolio</a></li>
-            <li><a href="javascript:void(0)" data-section="designPortfolio">Design Portfolio</a></li>
-          </ul>
         </li>
         <li><a href="javascript:void(0)" data-section="connect">Connect</a></li>
       </ul>
@@ -437,7 +432,7 @@
           <iframe width="300" height="200"
             src="https://www.youtube.com/embed/68hUynrpLvE?si=WZFagqoB2w2YkStt"
             title="Art Collage Video" frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen></iframe>
           <figcaption style="font-size:0.9em; color:#fff;">Art Collage Video</figcaption>
         </div>
@@ -456,7 +451,7 @@
         <a class="button" href="https://www.youtube.com/channel/UCj7Wvl98o-812LTdeS3Hbwg" target="_blank" rel="noopener">YouTube</a>
       </div>
       <!-- PDF viewer auto-load -->
-      <div id="pdfViewer" style=" display:flex; justify-content:center; width:100%; height:auto; overflow:auto; border:1px solid #444; margin-top:1em;"></div>
+      <div id="pdfViewer" style="display:flex; justify-content:center; width:100%; height:auto; overflow:auto; border:1px solid #444; margin-top:1em; position:relative; z-index:1;"></div>
     </section>
   </div>
 
@@ -571,15 +566,32 @@
       const pdfUrl = encodeURI("Zackary Xavier Zatizabal Resume.pdf");
       const container = document.getElementById("pdfViewer");
       container.innerHTML = "";
+      
+      // Add a direct link to download/view PDF as fallback
+      const pdfLink = document.createElement("div");
+      pdfLink.style.textAlign = "center";
+      pdfLink.style.marginBottom = "1em";
+      pdfLink.innerHTML = `<a href="${pdfUrl}" target="_blank" style="color: #ff4444;">Open PDF in new tab for clickable links</a>`;
+      container.appendChild(pdfLink);
+      
       pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
         for (let i = 1; i <= pdf.numPages; i++) {
           pdf.getPage(i).then(page => {
             let viewport = page.getViewport({ scale: 1.5 });
+            
+            // Create wrapper for canvas
+            let pageWrapper = document.createElement("div");
+            pageWrapper.style.position = "relative";
+            pageWrapper.style.marginBottom = "10px";
+            
             let canvas = document.createElement("canvas");
             let context = canvas.getContext("2d");
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            container.appendChild(canvas);
+            
+            pageWrapper.appendChild(canvas);
+            container.appendChild(pageWrapper);
+            
             let renderContext = { canvasContext: context, viewport: viewport };
             page.render(renderContext);
           });
