@@ -151,13 +151,15 @@
     .section {
       position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       padding: 2em; overflow-y: auto;
-      display: none; opacity: 0; filter: hue-rotate(10deg);
-      transition: opacity 0.3s, filter 0.3s;
+      visibility: hidden; opacity: 0; filter: hue-rotate(10deg);
+      transition: opacity 0.3s, filter 0.3s, visibility 0.3s;
       z-index: 1;
+      pointer-events: none;
     }
     .section.active {
-      display: block; opacity: 1; filter: hue-rotate(0deg);
+      visibility: visible; opacity: 1; filter: hue-rotate(0deg);
       z-index: 10;
+      pointer-events: auto;
     }
 
     /* ========== 6) HOME & ABOUT STYLES ========== */
@@ -599,11 +601,14 @@
       if (!oldSec) return;
       oldSec.style.filter = 'hue-rotate(10deg)';
       oldSec.style.opacity = '0';
+      oldSec.style.visibility = 'hidden';
+      oldSec.style.pointerEvents = 'none';
       setTimeout(() => {
         oldSec.classList.remove('active');
         const newSec = document.getElementById(sectionId);
         if (!newSec) return;
-        newSec.style.display = 'block';
+        newSec.style.visibility = 'visible';
+        newSec.style.pointerEvents = 'auto';
         newSec.style.opacity = '0';
         newSec.style.filter = 'hue-rotate(10deg)';
         setTimeout(() => {
