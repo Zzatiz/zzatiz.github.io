@@ -11,3 +11,5 @@
 !README.md
 !assets/
 !assets/**
+.vercel
+.env*.local
